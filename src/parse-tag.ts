@@ -1,6 +1,7 @@
 import { Comment, IDoc } from './types';
 
-import { htmlVoidElements } from 'html-void-elements';
+import { htmlVoidElements } from './element';
+
 const attrRE = /\s([^'"/\s><]+?)[\s/>]|([^\s=]+)=\s?(".*?"|'.*?')/g;
 
 export const parseTag = (tag: string): IDoc | Comment => {
