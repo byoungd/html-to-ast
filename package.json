@@ -1,0 +1,62 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byoungd/html-to-ast.git"
+  },
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^7.0.5",
+    "size-limit": "^7.0.5",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "html-void-elements": "^2.0.1"
+  },
+  "peerDependencies": {},
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "html-to-ast",
+  "author": "byoungd",
+  "module": "dist/htmltoast.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/htmltoast.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/htmltoast.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/html-to-ast.esm.js",
+      "require": "./dist/index.js"
+    }
+  }
+}
