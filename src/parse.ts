@@ -37,8 +37,8 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
       content: end === -1 ? html : html.substring(0, end),
     });
   }
-
-  html.replace(tagRE, function (tag, index): string {
+  // @ts-ignore
+  html.replace(tagRE, function (tag, index) {
     if (inComponent) {
       if (tag !== '</' + current.name + '>') {
         return '';
@@ -59,13 +59,13 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
       // if we're at root, push new base node
       if (level < 0) {
         result.push(comment);
-        // return result
+        return result
       }
       parent = arr[level];
-      if (parent && Array.isArray(parent.children)) {
+      if (parent && parent.children && Array.isArray(parent.children)) {
         parent.children.push(comment);
       }
-      // return result
+      return result
     }
 
     if (isOpen) {
@@ -147,7 +147,6 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
         }
       }
     }
-    return '';
   });
 
   return result;
