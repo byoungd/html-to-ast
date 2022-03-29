@@ -62,7 +62,7 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
         // return result
       }
       parent = arr[level];
-      if (parent.children) {
+      if (parent && Array.isArray(parent.children)) {
         parent.children.push(comment);
       }
       // return result
