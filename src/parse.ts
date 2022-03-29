@@ -138,10 +138,12 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
         //  * end > -1 indicates this is not a trailing text node
         //  * leading node is when level is -1 and parent has length 0
         if ((end > -1 && level + parent.length >= 0) || content !== ' ') {
-          parent.push({
-            type: 'text',
-            content: content,
-          });
+          if (parent && Array.isArray(parent)) {
+            parent.push({
+              type: 'text',
+              content: content,
+            });
+          }
         }
       }
     }
