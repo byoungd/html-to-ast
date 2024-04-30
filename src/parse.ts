@@ -8,7 +8,7 @@ const whitespaceRE = /^\s*$/;
 // re-used obj for quick lookups of components
 const empty = Object.create(null);
 
-interface MaybeDoc {
+export interface MaybeDoc {
   type?: string;
   text?: string;
   content?: string;

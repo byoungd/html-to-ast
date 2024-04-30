@@ -1,5 +1,5 @@
 import { htmlVoidElements } from './element';
-import { parse } from './parse';
+import { parse, MaybeDoc } from './parse';
 import { stringify } from './stringify';
 
-export { parse, stringify, htmlVoidElements };
+export { parse, stringify, htmlVoidElements, MaybeDoc };
