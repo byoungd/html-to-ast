@@ -51,6 +51,36 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
     const start = index + tag.length;
     const nextChar = html.charAt(start);
 
+    const appendTextNode = () => {
+      if (inComponent || nextChar === '<' || !nextChar) {
+        return;
+      }
+
+      const parentForText =
+        level === -1
+          ? result
+          : (arr[level] && Array.isArray(arr[level].children)
+              ? (arr[level].children as MaybeDoc[])
+              : undefined);
+
+      if (!parentForText) {
+        return;
+      }
+
+      const end = html.indexOf('<', start);
+      let content = html.slice(start, end === -1 ? undefined : end);
+      if (whitespaceRE.test(content)) {
+        content = ' ';
+      }
+
+      if ((end > -1 && level + parentForText.length >= 0) || content !== ' ') {
+        parentForText.push({
+          type: 'text',
+          content: content,
+        });
+      }
+    };
+
     let parent: MaybeDoc | MaybeDoc['children'];
 
     if (isComment) {
@@ -59,13 +89,15 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
       // if we're at root, push new base node
       if (level < 0) {
         result.push(comment);
-        return result
+        appendTextNode();
+        return result;
       }
       parent = arr[level];
       if (parent && parent.children && Array.isArray(parent.children)) {
         parent.children.push(comment);
       }
-      return result
+      appendTextNode();
+      return result;
     }
 
     if (isOpen) {
@@ -118,34 +150,7 @@ export const parse = (html: string, options: Partial<IOptions> = {}) => {
         // move current up a level to match the end tag
         current = level === -1 ? (result as MaybeDoc) : arr[level];
       }
-      if (!inComponent && nextChar !== '<' && nextChar) {
-        // trailing text node
-        // if we're at the root, push a base text node. otherwise add as
-        // a child to the current node.
-        parent = level === -1 ? result : (arr[level].children as MaybeDoc[]);
-
-        // calculate correct end of the content slice in case there's
-        // no tag after the text node.
-        const end = html.indexOf('<', start);
-        let content = html.slice(start, end === -1 ? undefined : end);
-        // if a node is nothing but whitespace, collapse it as the spec states:
-        // https://www.w3.org/TR/html4/struct/text.html#h-9.1
-        if (whitespaceRE.test(content)) {
-          content = ' ';
-        }
-        // don't add whitespace-only text nodes if they would be trailing text nodes
-        // or if they would be leading whitespace-only text nodes:
-        //  * end > -1 indicates this is not a trailing text node
-        //  * leading node is when level is -1 and parent has length 0
-        if ((end > -1 && level + parent.length >= 0) || content !== ' ') {
-          if (parent && Array.isArray(parent)) {
-            parent.push({
-              type: 'text',
-              content: content,
-            });
-          }
-        }
-      }
+      appendTextNode();
     }
   });
 

@@ -11,20 +11,27 @@ function attrString(attrs: Attr) {
   return ' ' + buff.join(' ');
 }
 
+function appendTagLike(buff: string, doc: IDoc): string {
+  buff +=
+    '<' +
+    doc.name +
+    (doc.attrs ? attrString(doc.attrs) : '') +
+    (doc.voidElement ? '/>' : '>');
+
+  if (doc.voidElement) {
+    return buff;
+  }
+
+  return buff + doc.children.reduce(_stringify, '') + '</' + doc.name + '>';
+}
+
 function _stringify(buff: string, doc: IDoc): string {
   switch (doc.type) {
     case 'text':
       return buff + doc.content;
     case 'tag':
-      buff +=
-        '<' +
-        doc.name +
-        (doc.attrs ? attrString(doc.attrs) : '') +
-        (doc.voidElement ? '/>' : '>');
-      if (doc.voidElement) {
-        return buff;
-      }
-      return buff + doc.children.reduce(_stringify, '') + '</' + doc.name + '>';
+    case 'component':
+      return appendTagLike(buff, doc);
     case 'comment':
       buff += '<!--' + doc.comment + '-->';
       return buff;
