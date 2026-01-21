@@ -1,8 +1,8 @@
 import { Comment, IDoc } from './types';
-
 import { htmlVoidElements } from './element';
 
-const attrRE = /\s([^'"/\s><]+?)[\s/>]|([^\s=]+)=\s?(".*?"|'.*?')/g;
+const attrRE = /\s([^'"\s><=]+)(?:\s*=\s*(['"])([^]*?)\2)?/g;
+// Regular expression for matching and capturing attributes and their values in an HTML tag.
 
 export const parseTag = (tag: string): IDoc | Comment => {
   const res: IDoc = {
@@ -20,7 +20,6 @@ export const parseTag = (tag: string): IDoc | Comment => {
       htmlVoidElements.includes(tagMatch[1]) ||
       tag.charAt(tag.length - 2) === '/';
 
-    // handle comment tag
     if (res.name.startsWith('!--')) {
       const endIndex = tag.indexOf('-->');
       return {
@@ -43,20 +42,11 @@ export const parseTag = (tag: string): IDoc | Comment => {
       continue;
     }
 
-    if (result[1]) {
-      const attr = result[1].trim();
-      let arr = [attr, ''];
+    const attrName = result[1];
+    const attrValue = result[3]; // Capture the attribute value without quotes
 
-      if (attr.indexOf('=') > -1) {
-        arr = attr.split('=');
-      }
-
-      res.attrs[arr[0]] = arr[1];
-      reg.lastIndex--;
-    } else if (result[2]) {
-      res.attrs[result[2]] = result[3]
-        .trim()
-        .substring(1, result[3].length - 1);
+    if (attrName && attrValue !== undefined) {
+      res.attrs[attrName] = attrValue;
     }
   }
 
